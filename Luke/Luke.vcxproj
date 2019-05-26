@@ -81,8 +81,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Graph.h" />
+    <ClInclude Include="GraphAlgorithmsTest.h" />
+    <ClInclude Include="IndexPriorityQueue.h" />
+    <ClInclude Include="IndexPriorityQueueTest.h" />
     <ClInclude Include="KaryHeap.h" />
     <ClInclude Include="KaryHeapTest.h" />
+    <ClInclude Include="GraphAlgorithms.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
