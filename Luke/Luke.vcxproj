@@ -88,6 +88,8 @@
     <ClInclude Include="KaryHeap.h" />
     <ClInclude Include="KaryHeapTest.h" />
     <ClInclude Include="GraphAlgorithms.h" />
+    <ClInclude Include="TernarySearchTree.h" />
+    <ClInclude Include="TernarySearchTreeTest.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
