@@ -65,7 +65,7 @@ void TestTernarySearchTree()
 	cout << "The number of words: " << words.size() << endl << endl;
 
 	// Insert
-	cout << "Insertion Time" << endl;
+	cout << "Insertion Time(ms)" << endl;
 	auto s = steady_clock::now();
 	TernarySearchTree<int> tst2;
 	for (int i = 0; i < words.size(); ++i)
@@ -87,7 +87,7 @@ void TestTernarySearchTree()
 	cout << "MAP: " << d.count() << endl << endl;
 
 	// Get
-	cout << "Retrieval Time" << endl;
+	cout << "Retrieval Time(ms)" << endl;
 	s = steady_clock::now();
 	for (size_t i = words.size(); i > 0; --i)
 	{
@@ -107,7 +107,7 @@ void TestTernarySearchTree()
 	cout << "MAP: " << d.count() << endl << endl;
 
 	// Travese
-	cout << "Traversal Time" << endl;
+	cout << "Traversal Time(us)" << endl;
 	s = steady_clock::now();
 	int idx = 0;
 	for (auto& key : tst2.Keys())
@@ -115,8 +115,8 @@ void TestTernarySearchTree()
 		idx++;
 	}
 	e = steady_clock::now();
-	d = duration_cast<milliseconds>(e - s);
-	cout << "TST: " << d.count() << endl;
+	auto dm = duration_cast<microseconds>(e - s);
+	cout << "TST: " << dm.count() << endl;
 
 	s = steady_clock::now();
 	for (auto it = m.begin(); it != m.end(); ++it)
@@ -124,11 +124,35 @@ void TestTernarySearchTree()
 		idx--;
 	}
 	e = steady_clock::now();
-	d = duration_cast<milliseconds>(e - s);
-	cout << "MAP: " << d.count() << endl << endl;
+	dm = duration_cast<microseconds>(e - s);
+	cout << "MAP: " << dm.count() << endl << endl;
+
+	// KeysWithPrefix
+	cout << "KeysWithPrefix Time(us)" << endl;
+	s = steady_clock::now();
+	string prefix = "a";
+	vector<string> keys_with_prefix = tst2.KeysWithPrefix(prefix);
+	cout << "The number of keys with \"" << prefix << "\": " << keys_with_prefix.size() << endl;
+	e = steady_clock::now();
+	dm = duration_cast<microseconds>(e - s);
+	cout << "TST: " << dm.count() << endl;
+
+	s = steady_clock::now();
+	vector<string> keys_with_prefix_map;
+	for (auto it = m.begin(); it != m.end(); ++it)
+	{
+		if (it->first._Starts_with(prefix))
+		{
+			keys_with_prefix_map.push_back(it->first);
+		}
+	}
+	e = steady_clock::now();
+	dm = duration_cast<microseconds>(e - s);
+	cout << "MAP: " << dm.count() << endl;
+	cout << "Same?: " << boolalpha << (keys_with_prefix == keys_with_prefix_map) << endl << endl;
 
 	// Remove
-	cout << "Removal Time" << endl;
+	cout << "Removal Time(ms)" << endl;
 	s = steady_clock::now();
 	for (int i = 0; i < words.size(); ++i)
 	{
@@ -146,6 +170,4 @@ void TestTernarySearchTree()
 	e = steady_clock::now();
 	d = duration_cast<milliseconds>(e - s);
 	cout << "MAP: " << d.count() << endl << endl;
-
-
 }

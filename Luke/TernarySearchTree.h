@@ -70,41 +70,15 @@ public:
 	}
 	std::optional<Value> Get(const std::string& key)
 	{
-		if (key.empty())
+		auto pnode = Get(root_, key);
+		if (pnode == nullptr)
 		{
 			return {};
 		}
-
-		size_t depth = 0;
-		std::unique_ptr<Node>* pnode = &root_;
-		while (depth < key.size())
+		else
 		{
-			const char c = key[depth];
-			if (*pnode == nullptr)
-			{
-				return {};
-			}
-
-			const std::unique_ptr<Node>& node = *pnode;
-			if (c < node->key)
-			{
-				pnode = &node->children[Node::Left];
-			}
-			else if (c > node->key)
-			{
-				pnode = &node->children[Node::Right];
-			}
-			else if (depth == key.size() - 1)
-			{
-				return *node->value;
-			}
-			else
-			{
-				pnode = &node->children[Node::Middle];
-				depth++;
-			}
+			return *pnode->get()->value;
 		}
-		return {};
 	}
 	void Remove(const std::string& key)
 	{
@@ -182,28 +156,77 @@ public:
 	{
 		std::vector<std::string> keys;
 		keys.reserve(num_items);
-		Traverse(root_, keys, "");
+		Collect(root_, keys, "");
+		return keys;
+	}
+	std::vector<std::string> KeysWithPrefix(const string& prefix)
+	{
+		std::vector<std::string> keys;
+		auto pnode = Get(root_, prefix);
+		if (pnode != nullptr)
+		{
+			keys.reserve(num_items);
+			keys.push_back(prefix);
+			Collect((*pnode)->children[Node::Middle], keys, prefix);
+			keys.shrink_to_fit();
+		}
 		return keys;
 	}
 	inline size_t Size() { return num_items; }
 
 private:
-	void Traverse(const std::unique_ptr<Node>& node, std::vector<std::string>& keys, std::string prefix)
+	void Collect(const std::unique_ptr<Node>& node, std::vector<std::string>& keys, std::string prefix)
 	{
 		if (node == nullptr)
 		{
 			return;
 		}
 
-		Traverse(node->children[Node::Left], keys, prefix);
-
+		Collect(node->children[Node::Left], keys, prefix);
 		if (node->value != nullptr)
 		{
 			keys.push_back(prefix + node->key);
 		}
-		Traverse(node->children[Node::Middle], keys, prefix + node->key);
+		Collect(node->children[Node::Middle], keys, prefix + node->key);
+		Collect(node->children[Node::Right], keys, prefix);
+	}
+	std::unique_ptr<Node>* Get(std::unique_ptr<Node>& node, const string& key)
+	{
+		if (key.empty())
+		{
+			return nullptr;
+		}
 
-		Traverse(node->children[Node::Right], keys, prefix);
+		size_t depth = 0;
+		std::unique_ptr<Node>* pnode = &node;
+		while (depth < key.size())
+		{
+			const char c = key[depth];
+			if (*pnode == nullptr)
+			{
+				return nullptr;
+			}
+
+			const std::unique_ptr<Node>& node = *pnode;
+			if (c < node->key)
+			{
+				pnode = &node->children[Node::Left];
+			}
+			else if (c > node->key)
+			{
+				pnode = &node->children[Node::Right];
+			}
+			else if (depth == key.size() - 1)
+			{
+				return pnode;
+			}
+			else
+			{
+				pnode = &node->children[Node::Middle];
+				depth++;
+			}
+		}
+		return nullptr;
 	}
 
 	size_t max_depth = 0U;
