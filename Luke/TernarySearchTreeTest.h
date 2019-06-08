@@ -31,6 +31,21 @@ void TestTernarySearchTree()
 		}
 	}
 
+	vector<string> keys = tst.Keys();
+	int i = 0;
+	for (i = 0; i < keys.size() - 1; ++i)
+	{
+		cout << keys[i] << " -> ";
+	}
+	cout << keys[i] << endl << endl;
+
+	tst.Remove("shore");
+	tst.Remove("the");
+	tst.Remove("sells");
+	tst.Remove("shells");
+	tst.Remove("she");
+	tst.Remove("by");
+	tst.Remove("sea");
 
 	ifstream in("words.txt");
 	if (!in.is_open())
@@ -47,43 +62,90 @@ void TestTernarySearchTree()
 		words.push_back(word);
 	}
 	in.close();
-	cout << "The number of words: " << words.size() << endl;
+	cout << "The number of words: " << words.size() << endl << endl;
 
-	const auto s1 = steady_clock::now();
+	// Insert
+	cout << "Insertion Time" << endl;
+	auto s = steady_clock::now();
 	TernarySearchTree<int> tst2;
 	for (int i = 0; i < words.size(); ++i)
 	{
-		tst.Put(words[i], i);
+		tst2.Put(words[i], i);
 	}
-	const auto e1 = steady_clock::now();
-	const auto d1 = duration_cast<milliseconds>(e1 - s1);
-	cout << d1.count() << endl;
+	auto e = steady_clock::now();
+	auto d = duration_cast<milliseconds>(e - s);
+	cout << "TST: " << d.count() << endl;
 
-	const auto s2 = steady_clock::now();
+	s = steady_clock::now();
 	map<string, int> m;
 	for (int i = 0; i < words.size(); ++i)
 	{
 		m[words[i]] = i;
 	}
-	const auto e2 = steady_clock::now();
-	const auto d2 = duration_cast<milliseconds>(e2 - s2);
-	cout << d2.count() << endl;
+	e = steady_clock::now();
+	d = duration_cast<milliseconds>(e - s);
+	cout << "MAP: " << d.count() << endl << endl;
 
-	const auto s3 = steady_clock::now();
+	// Get
+	cout << "Retrieval Time" << endl;
+	s = steady_clock::now();
 	for (size_t i = words.size(); i > 0; --i)
 	{
-		auto a = tst.Get(words[i - 1]);
+		auto a = tst2.Get(words[i - 1]);
 	}
-	const auto e3 = steady_clock::now();
-	const auto d3 = duration_cast<milliseconds>(e3 - s3);
-	cout << d3.count() << endl;
+	e = steady_clock::now();
+	d = duration_cast<milliseconds>(e - s);
+	cout << "TST: " << d.count() << endl;
 
-	const auto s4 = steady_clock::now();
+	s = steady_clock::now();
 	for (size_t i = words.size(); i > 0; --i)
 	{
 		int a = m[words[i - 1]];
 	}
-	const auto e4 = steady_clock::now();
-	const auto d4 = duration_cast<milliseconds>(e4 - s4);
-	cout << d4.count() << endl;
+	e = steady_clock::now();
+	d = duration_cast<milliseconds>(e - s);
+	cout << "MAP: " << d.count() << endl << endl;
+
+	// Travese
+	cout << "Traversal Time" << endl;
+	s = steady_clock::now();
+	int idx = 0;
+	for (auto& key : tst2.Keys())
+	{
+		idx++;
+	}
+	e = steady_clock::now();
+	d = duration_cast<milliseconds>(e - s);
+	cout << "TST: " << d.count() << endl;
+
+	s = steady_clock::now();
+	for (auto it = m.begin(); it != m.end(); ++it)
+	{
+		idx--;
+	}
+	e = steady_clock::now();
+	d = duration_cast<milliseconds>(e - s);
+	cout << "MAP: " << d.count() << endl << endl;
+
+	// Remove
+	cout << "Removal Time" << endl;
+	s = steady_clock::now();
+	for (int i = 0; i < words.size(); ++i)
+	{
+		tst2.Remove(words[i]);
+	}
+	e = steady_clock::now();
+	d = duration_cast<milliseconds>(e - s);
+	cout << "TST: " << d.count() << endl;
+
+	s = steady_clock::now();
+	for (int i = 0; i < words.size(); ++i)
+	{
+		m.erase(words[i]);
+	}
+	e = steady_clock::now();
+	d = duration_cast<milliseconds>(e - s);
+	cout << "MAP: " << d.count() << endl << endl;
+
+
 }
